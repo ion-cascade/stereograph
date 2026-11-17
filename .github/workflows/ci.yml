@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  scaffold:
+  connection:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -34,3 +34,9 @@ jobs:
               raise SystemExit('\n'.join(errors))
           print(f'Checked links in {len(files)} Markdown files')
           PY
+      - name: Install server and locked dependencies
+        run: |
+          pipx install uv==0.12.17
+          uv sync --locked
+      - name: Check connection protocol
+        run: uv run --locked python -m unittest discover -s tests
