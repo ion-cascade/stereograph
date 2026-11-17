@@ -38,7 +38,7 @@ class FitProfileTests(unittest.TestCase):
 
     def test_invalid_envelope_and_overlapping_protected_region(self):
         for field, value in (("direction", [0, 0, 0]), ("distance", float("inf")),
-                             ("protected_groups", [self.plan["mask"]]), ("extra_frames", list(range(9)))):
+                             ("cache_policy", "invalidate"), ("protected_groups", [self.plan["mask"]]), ("extra_frames", list(range(9)))):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 Corrective.parse({**self.plan, field: value})
 

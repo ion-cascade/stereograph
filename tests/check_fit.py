@@ -105,7 +105,9 @@ async def native(context, health, directory):
     error(await tool(context, "apply_cloth_corrective", candidate_id=candidate, **auth), "stale_corrective")
     await execute(context, sid, 'bpy.data.objects["Clearance guard"].location.y -= .003')
     await execute(context, sid, 'bpy.data.objects["Front skirt"].modifiers.new("Unbaked cloth", "CLOTH")')
-    error(await tool(context, "preview_cloth_corrective", profile=PLAN, **auth), "corrective_cache_unresolved")
+    for policy in ("current", "frozen_bake"):
+        error(await tool(context, "preview_cloth_corrective", profile=dict(PLAN, cache_policy=policy), **auth),
+              "corrective_cache_unresolved")
     await execute(context, sid, 'o=bpy.data.objects["Front skirt"]; o.modifiers.remove(o.modifiers["Unbaked cloth"])')
     candidate = (await preview(context, **auth))["candidate_id"]
     applied = await data(context, "apply_cloth_corrective", candidate_id=candidate, **auth)

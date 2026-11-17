@@ -42,12 +42,13 @@ class Corrective:
     max_displacement: float
     protected_tolerance: float
     pairs: tuple
+    cache_policy: str
 
     @classmethod
     def parse(cls, raw):
         data = mapping(raw, "Cloth corrective", {"version", "garment", "mask", "protected_groups",
                        "protected_objects", "direction", "distance", "frame", "span", "extra_frames",
-                       "min_edge_ratio", "max_edge_ratio", "max_displacement", "protected_tolerance", "pairs"})
+                       "min_edge_ratio", "max_edge_ratio", "max_displacement", "protected_tolerance", "pairs", "cache_policy"})
         if type(data.get("version")) is not int or data["version"] != 1:
             raise ValueError("Use cloth corrective version 1.")
         garment = name(data.get("garment"), "garment object")
@@ -70,10 +71,13 @@ class Corrective:
         pairs = data.get("pairs")
         if not isinstance(pairs, list) or not 1 <= len(pairs) <= 6:
             raise ValueError("Supply one repair pair followed by up to five guard pairs.")
+        cache_policy = data.get("cache_policy", "current")
+        if cache_policy not in ("current", "frozen_bake"):
+            raise ValueError("Use current or frozen_bake as the cache policy.")
         return cls(garment, mask, tuple(groups), tuple(objects), tuple(x/length for x in direction),
                    number(data.get("distance"), "Local correction distance", 1e-6, .15), frame, span,
                    tuple(sorted(times)), number(data.get("min_edge_ratio", .9), "Minimum edge ratio", .01, 1),
                    number(data.get("max_edge_ratio", 1.1), "Maximum edge ratio", 1, 3),
                    number(data.get("max_displacement", .03), "Maximum world displacement", 1e-6, .3),
                    number(data.get("protected_tolerance", 1e-6), "Protected detail tolerance", 1e-8, .005),
-                   tuple(Pair.parse(pair, garment) for pair in pairs))
+                   tuple(Pair.parse(pair, garment) for pair in pairs), cache_policy)

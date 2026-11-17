@@ -54,7 +54,11 @@ Geometry Nodes modifier and keys a smooth envelope that is zero at
 both endpoints and outside the envelope. It leaves prior modifiers,
 Actions, shape keys and the cloth bake in place. Supported stacks
 evaluate authored geometry or a current internal cloth bake that covers
-all sampled frames. Review rebaked cloth separately.
+all sampled frames. For a retained, outdated internal bake, deliberately
+choose `"cache_policy": "frozen_bake"` to evaluate the recorded playback
+and preserve the existing outdated flag. This makes no claim about a fresh
+solve. Unbaked, external and out-of-range caches are rejected. Review rebaked
+cloth separately.
 
 1. Call `preview_cloth_corrective`. Live previews use the session ID from
    `blender_health`. A `blend_file` preview returns measurements for a

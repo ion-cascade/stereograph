@@ -44,16 +44,23 @@ def _objects(bpy, plan):
 
 
 def _cache_guard(obj, plan):
+    playback = {}
     for modifier in obj.modifiers:
         if modifier.type == "CLOTH" and (modifier.show_viewport or modifier.show_render):
             cache = modifier.point_cache
-            if (not cache.is_baked or cache.is_outdated or cache.use_external
-                    or min(plan.times) < cache.frame_start or max(plan.times) > cache.frame_end):
-                raise InvalidScene("corrective_cache_unresolved", "Use authored geometry or a current internal cloth bake covering every sample.")
+            if (not cache.is_baked or cache.use_external
+                    or min(plan.times) < cache.frame_start or max(plan.times) > cache.frame_end
+                    or (cache.is_outdated and plan.cache_policy != "frozen_bake")):
+                raise InvalidScene("corrective_cache_unresolved",
+                                   f"{obj.name!r} needs a current internal bake covering every sample. "
+                                   "Use frozen_bake only to review an existing, outdated internal bake as playback.")
+            playback[modifier.name] = dict(baked=cache.is_baked, outdated=cache.is_outdated,
+                                           range=[cache.frame_start, cache.frame_end])
         if modifier.type in {"SOFT_BODY", "FLUID", "DYNAMIC_PAINT", "PARTICLE_SYSTEM", "MESH_CACHE", "MESH_SEQUENCE_CACHE"}:
             if modifier.show_viewport or modifier.show_render:
                 raise InvalidScene("corrective_stack_unsupported", f"Active {modifier.type} is outside corrective support.")
-        if modifier.type == "NODES" and modifier.node_group:
+        if (modifier.type == "NODES" and modifier.node_group
+                and (modifier.show_viewport or modifier.show_render)):
             pending, visited = [modifier.node_group], set()
             while pending:
                 tree = pending.pop()
@@ -66,6 +73,7 @@ def _cache_guard(obj, plan):
                     nested = getattr(node, "node_tree", None)
                     if nested:
                         pending.append(nested)
+    return playback
 
 
 def _identity(bpy, plan, objects, start):
@@ -176,8 +184,7 @@ def _assess(bpy, plan, deadline, views=(), *, accepted=None, checkpoint=None):
     key = _identity(bpy, plan, objects, start)
     if accepted is not None and accepted.identity != key:
         raise InvalidScene("stale_corrective", "The garment, stack, scene or current frame changed. Preview again.")
-    for target in objects.values():
-        _cache_guard(target, plan)
+    caches = {name: _cache_guard(target, plan) for name, target in objects.items()}
     rows, conflicts, evidence = [], [], []
     baseline = {}
     try:
@@ -209,9 +216,13 @@ def _assess(bpy, plan, deadline, views=(), *, accepted=None, checkpoint=None):
                         for view in views:
                             evidence.append(dict(phase=phase, view=view, frame=time, svg=diagram(
                                 *source.evidence, source.contacts[0], view, deadline, framing=framing, phase=phase)))
+            current_caches = {name: _cache_guard(target, plan) for name, target in objects.items()}
+            if current_caches != caches:
+                raise InvalidScene("corrective_cache_changed", "The simulation cache state changed during evaluation.")
             result = dict(garment=plan.garment, frame=plan.frame, duration=[plan.frame-plan.span, plan.frame+plan.span],
                           stack_position="after_existing_modifiers", feasible=not conflicts, conflicts=conflicts,
                           pair_coverage=[asdict(pair) for pair in plan.pairs],
+                          cache_policy=plan.cache_policy, cached_playback={k: v for k, v in caches.items() if v},
                           samples=rows, evidence=evidence, units="blender_units")
             if checkpoint:
                 if conflicts:
