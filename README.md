@@ -2,7 +2,7 @@
 
 An independently maintained MCP server and Blender add-on for scene inspection, editing, and spatial verification.
 
-The 0.1 milestone connects an MCP client to a live Blender window or launches background Blender on a specified file. Start with the [connection guide](docs/connection.md) and the [native verification record](docs/connection-checks.md).
+Stereograph connects an MCP client to Blender for scene inspection, documentation lookup, workspace navigation, screenshots, and rendering. It can open a specified file in background Blender for inspection, rendering, and trusted Python execution. Start with the [connection guide](docs/connection.md) and [Blender Lab compatibility matrix](docs/parity.md).
 
 ## Roadmap
 

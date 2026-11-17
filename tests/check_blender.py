@@ -168,7 +168,7 @@ async def verify(args, directory):
         async with ClientSession(reader, writer) as session:
             await session.initialize()
             tools = await session.list_tools()
-            assert {tool.name for tool in tools.tools} == {
+            assert {tool.name for tool in tools.tools} >= {
                 "blender_health", "execute_blender_code", "execute_blender_code_for_cli"
             }, tools
             error(await call(session, "blender_health"), "blender_unavailable", "not_started")

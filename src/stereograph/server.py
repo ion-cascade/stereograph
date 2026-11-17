@@ -1,5 +1,7 @@
 """Model Context Protocol server for local Blender sessions."""
 
+import argparse
+from importlib.metadata import version
 from importlib.resources import files
 import os
 from pathlib import Path
@@ -10,6 +12,11 @@ from tempfile import TemporaryDirectory
 from mcp.server.fastmcp import FastMCP
 
 from stereograph_bridge import wire
+
+from .doc_install import default_directory, install
+from .documentation import register_documentation_tools
+from .inspection_tools import register_inspection_tools
+from .viewport_tools import register_viewport_tools
 
 mcp = FastMCP("Stereograph")
 
@@ -73,6 +80,12 @@ def execute_blender_code_for_cli(blend_file: str, code: str, timeout: float = 30
     issue = _check_execution(code, timeout)
     if issue is not None:
         return issue
+    return _background(blend_file, timeout, operation="execute", code=code)
+
+
+def _background(blend_file, timeout, **request_data):
+    if not wire.valid_timeout(timeout):
+        return wire.failure("bad_request", "Timeout must be between 0.05 and 120 seconds.")
     try:
         filename = Path(blend_file).expanduser().resolve(strict=True)
     except (OSError, ValueError, RuntimeError):
@@ -85,7 +98,7 @@ def execute_blender_code_for_cli(blend_file: str, code: str, timeout: float = 30
     with TemporaryDirectory(prefix="stereograph-") as scratch:
         workdir = Path(scratch)
         request, response, log = (workdir / name for name in ("request.json", "response.json", "blender.log"))
-        request.write_bytes(wire.encode({"file": str(filename), "code": code}))
+        request.write_bytes(wire.encode({"file": str(filename), **request_data}))
         args = [
             blender, "--background", "--factory-startup", "--disable-autoexec", str(filename),
             "--python-exit-code", "3", "--python", str(worker), "--", str(request), str(response),
@@ -114,5 +127,23 @@ def execute_blender_code_for_cli(blend_file: str, code: str, timeout: float = 30
             return wire.failure("background_failed", str(exc), "unknown")
 
 
+register_inspection_tools(mcp, _live, _background)
+register_documentation_tools(mcp)
+register_viewport_tools(mcp, _live, _background)
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Stereograph MCP server for Blender")
+    parser.add_argument("--version", action="version", version=version("ion-cascade-stereograph"))
+    subcommands = parser.add_subparsers(dest="command")
+    docs = subcommands.add_parser("install-docs", help="Install the pinned Blender documentation for offline lookup")
+    docs.add_argument("--destination", type=Path, default=default_directory())
+    args = parser.parse_args()
+    if args.command == "install-docs":
+        try:
+            location = install(args.destination)
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            parser.exit(1, f"Documentation installation failed: {exc}\n")
+        print(location)
+        return
     mcp.run(transport="stdio")
