@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Stereograph mark</title>
+  <rect width="128" height="128" rx="28" fill="#11222a"/>
+  <rect x="1" y="1" width="126" height="126" rx="27" fill="none" stroke="#39505b" stroke-width="2"/>
+  <path d="M21 28v-7h10m66 0h10v7m0 72v7H97m-66 0H21v-7" fill="none" stroke="#66828b" stroke-width="3" stroke-linecap="round"/>
+  <g fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m50 30 27 15v30L50 90 23 75V45Zm0 30 27-15M50 60 23 45m27 15v30" fill="#132c36" stroke="#94baff"/>
+    <path d="m79 45 27 15v30l-27 15-27-15V60Zm0 30 27-15M79 75 52 60m27 15v30" fill="#84f5d5" fill-opacity=".12" stroke="#84f5d5"/>
+  </g>
+  <path d="m50 60 29 15" fill="none" stroke="#f7cc83" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#f7cc83">
+    <circle cx="50" cy="60" r="4.5"/>
+    <circle cx="79" cy="75" r="4.5"/>
+  </g>
+</svg>
