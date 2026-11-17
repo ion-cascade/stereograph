@@ -1,0 +1,83 @@
+"""Blender-side operations. The caller owns the Blender main thread."""
+
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
+from pathlib import Path
+import sys
+import traceback
+
+from .wire import MAX_CODE, MAX_MESSAGE, VERSION, InvalidMessage, encode, failure, success
+
+OUTPUT_LIMIT = 8192
+
+
+class Output(StringIO):
+    def write(self, value):
+        remaining = OUTPUT_LIMIT - self.tell()
+        if remaining > 0:
+            super().write(value[:remaining])
+        return len(value)
+
+
+def scene_state(bpy, session_id=None):
+    scene = bpy.context.scene
+    return {
+        "protocol_version": VERSION,
+        "session_id": session_id,
+        "blender_version": bpy.app.version_string,
+        "python_version": sys.version.split()[0],
+        "background": bpy.app.background,
+        "file": bpy.data.filepath or None,
+        "scene": scene.name if scene else None,
+    }
+
+
+def run_python(bpy, code):
+    if not isinstance(code, str) or not code.strip() or len(code) > MAX_CODE:
+        return failure("invalid_code", "Provide a non-empty script within the code size limit.")
+
+    out, err = Output(), Output()
+    scope = {"__name__": "__main__", "bpy": bpy}
+    try:
+        compiled = compile(code, "<stereograph>", "exec")
+    except (SyntaxError, ValueError) as exc:
+        return failure("python_syntax_error", str(exc)[:1000])
+
+    try:
+        with redirect_stdout(out), redirect_stderr(err):
+            exec(compiled, scope)
+    except (Exception, SystemExit, KeyboardInterrupt):
+        outcome = failure("python_error", traceback.format_exc(limit=8)[-6000:], "may_have_changed")
+    else:
+        outcome = success(scope.get("result"))
+    outcome.update(stdout=out.getvalue(), stderr=err.getvalue())
+    try:
+        size = len(encode(outcome))
+    except InvalidMessage:
+        return failure("invalid_result", "Assign finite JSON-compatible data to result.", "completed")
+    if size > MAX_MESSAGE:
+        return failure("result_too_large", "Return a smaller result.", "completed")
+    return outcome
+
+
+def dispatch(bpy, request, session_id, allow_python):
+    version = request.get("version")
+    if type(version) is not int or version != VERSION:
+        return failure("protocol_mismatch", f"This bridge supports protocol {VERSION}.")
+    operation = request.get("operation")
+    if operation == "health":
+        return success({**scene_state(bpy, session_id), "python_enabled": allow_python})
+    if operation != "execute":
+        return failure("unknown_operation", "Unknown Blender operation.")
+    if not allow_python:
+        return failure("python_disabled", "Python execution is disabled for this Blender session.")
+    if not session_id or request.get("expected_session") != session_id:
+        return failure("stale_session", "Read health again and confirm the intended Blender file.")
+    return run_python(bpy, request.get("code"))
+
+
+def headless_request(bpy, request):
+    target = request.get("file")
+    if not isinstance(target, str) or not bpy.data.filepath or Path(bpy.data.filepath).resolve() != Path(target):
+        return failure("wrong_file", "Background Blender did not open the requested file.")
+    return {"state": scene_state(bpy), **run_python(bpy, request.get("code"))}

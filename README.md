@@ -2,7 +2,7 @@
 
 An independently maintained MCP server and Blender add-on for scene inspection, editing, and spatial verification.
 
-Stereograph is a new Ion Cascade project. The repository currently contains the design milestones and acceptance checklist. The first installable release is planned for v0.1.0.
+The 0.1 milestone connects an MCP client to a live Blender window or launches background Blender on a specified file. Start with the [connection guide](docs/connection.md) and the [native verification record](docs/connection-checks.md).
 
 ## Roadmap
 

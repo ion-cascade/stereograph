@@ -1,0 +1,13 @@
+schema_version = "1.0.0"
+id = "stereograph_bridge"
+version = "0.1.0"
+name = "Ion Cascade Stereograph"
+tagline = "Connect a local MCP client to Blender"
+maintainer = "Ion Cascade"
+type = "add-on"
+website = "https://github.com/ion-cascade/stereograph"
+blender_version_min = "5.3.0"
+license = ["SPDX:MIT"]
+
+[permissions]
+network = "Accept authenticated MCP requests over loopback"
