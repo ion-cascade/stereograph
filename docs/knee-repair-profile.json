@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "rig": "Test rig",
+  "controls": {
+    "upper": "Upper",
+    "lower": "Lower",
+    "foot": "Foot",
+    "ik_owner": "Lower",
+    "pole": "Knee pole"
+  },
+  "forward": [
+    0,
+    1,
+    0
+  ],
+  "clearance": [
+    {
+      "pair": [
+        "Knee guard",
+        "Side obstacle"
+      ],
+      "minimum_gap": 0.01
+    }
+  ],
+  "limits": {
+    "max_swivel": 25,
+    "minimum_improvement": 5,
+    "neighbour_step": 20
+  }
+}

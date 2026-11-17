@@ -68,6 +68,7 @@ def bounded_result(outcome):
 
 POSE_OPERATIONS = {"pose_preview", "pose_apply", "pose_cancel"}
 REVIEW_OPERATIONS = {"motion_review", "motion_jump"}
+RIG_OPERATIONS = {"rig_inspect", "knee_preview", "knee_apply", "knee_cancel"}
 
 
 def dispatch(bpy, request, session_id, allow_python):
@@ -81,6 +82,8 @@ def dispatch(bpy, request, session_id, allow_python):
         return bounded_result(run_pose(request, session_id))
     if operation in REVIEW_OPERATIONS:
         return bounded_result(run_review(bpy, request, session_id))
+    if operation in RIG_OPERATIONS:
+        return bounded_result(run_rig(bpy, request, session_id))
     if operation in {"inspect", "viewport", "spatial"}:
         return bounded_result(run_native(bpy, request))
     if operation != "execute":
@@ -99,6 +102,15 @@ def run_pose(request, session_id=None):
     from .posing.dispatch import dispatch as pose_dispatch
 
     return pose_dispatch(request["operation"], parameters, session_id, parameters["seconds"])
+
+
+def run_rig(bpy, request, session_id=None):
+    arguments = request.get("parameters")
+    if not isinstance(arguments, dict) or not valid_timeout(arguments.get("seconds")):
+        return failure("bad_rig_request", "Invalid rig parameters or timeout.")
+    from .rigging.dispatch import dispatch as rig_dispatch
+
+    return rig_dispatch(bpy, request["operation"], arguments, session_id, arguments["seconds"])
 
 
 def run_review(bpy, request, session_id=None):
@@ -138,6 +150,8 @@ def headless_request(bpy, request):
         outcome = run_pose(request)
     elif operation in REVIEW_OPERATIONS:
         outcome = run_review(bpy, request)
+    elif operation in RIG_OPERATIONS:
+        outcome = run_rig(bpy, request)
     elif operation in {"inspect", "viewport", "spatial"}:
         outcome = run_native(bpy, request)
     else:
