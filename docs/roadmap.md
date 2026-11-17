@@ -31,6 +31,10 @@ Expose one read-only inspection operation for evaluated surfaces, named pairs, c
 
 Qualify one planted-hand FK elbow edit from preview to native Undo. Version the rig profile and support world and moving prop anchors. Record wrist angle, hand drift, segment lengths and evaluated surface clearance at the target frame and four neighbours. Verify accepted and rejected candidates on repeatable fixtures and run the workflow on a disposable knight copy. See the [elbow editing guide](elbow-editing.md).
 
+### 0.6 · Contact and motion review
+
+Review named surfaces through a frame range with phase-specific clearance and contact rules. Measure fractional frames, retain matched witnesses and compare revisions using the same sampling and framing. Qualify a subframe-only crossing on a synthetic fixture and the left-hand transfer on a disposable production copy. See the [motion review guide](motion-review.md).
+
 ### Later · Broader pose editing
 
 Extend the supported rig controls and edit types based on evidence from the elbow workflow and subsequent production poses.

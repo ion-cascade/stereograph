@@ -109,7 +109,8 @@ async def connect(command, env, store, reference=False, args=()):
                 handshake = await session.initialize()
                 tools = (await session.list_tools()).tools
                 expected = TOOL_NAMES if reference else TOOL_NAMES | {"blender_health", "inspect_spatial_pairs", "preview_elbow_edit",
-                                               "apply_elbow_edit", "cancel_elbow_edit"}
+                                               "apply_elbow_edit", "cancel_elbow_edit", "review_motion_contacts",
+                                               "compare_motion_reviews", "jump_to_motion_witness"}
                 assert {tool.name for tool in tools} == expected
                 (store / "schemas.json").write_text(json.dumps({
                     "server": handshake.serverInfo.model_dump(mode="json"),

@@ -232,7 +232,8 @@ async def trial(args, server, fixture, fixture_name, records, round_number, rng)
     print(f"{label} / {server.name}", flush=True)
     async with connect(server, f"{label}-mcp.log") as (session, initialized_ns, _name):
         expected = TOOL_NAMES if server.reference else TOOL_NAMES | {"blender_health", "inspect_spatial_pairs", "preview_elbow_edit",
-                                               "apply_elbow_edit", "cancel_elbow_edit"}
+                                               "apply_elbow_edit", "cancel_elbow_edit", "review_motion_contacts",
+                                               "compare_motion_reviews", "jump_to_motion_witness"}
         assert {tool.name for tool in (await session.list_tools()).tools} == expected
         if round_number is not None:
             records.record(**fields, kind="cold", case="mcp-initialize", elapsed_ns=initialized_ns, ok=True)
