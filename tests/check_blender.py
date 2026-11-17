@@ -174,10 +174,12 @@ async def verify(args, directory):
             error(await call(session, "blender_health"), "blender_unavailable", "not_started")
             await check_background(session, fixture)
             if args.live:
-                archive = directory / "stereograph_bridge.zip"
-                run_blender([*background, "--command", "extension", "build",
-                             "--source-dir", str(ROOT / "src/stereograph_bridge"),
-                             "--output-filepath", str(archive)], env, directory / "build.log")
+                archive = args.addon
+                if archive is None:
+                    archive = directory / "stereograph_bridge.zip"
+                    run_blender([*background, "--command", "extension", "build",
+                                 "--source-dir", str(ROOT / "src/stereograph_bridge"),
+                                 "--output-filepath", str(archive)], env, directory / "build.log")
                 install = directory / "install.py"
                 install.write_text(INSTALL)
                 run_blender([*background, "--python-exit-code", "3",
@@ -210,7 +212,11 @@ if __name__ == "__main__":
     parser.add_argument("--live", action="store_true", help="Also start and close a temporary Blender window")
     parser.add_argument("--blender", default=shutil.which("blender"))
     parser.add_argument("--server", default=str(Path(sys.executable).with_name("stereograph")))
+    parser.add_argument("--addon", type=lambda path: Path(path).resolve(),
+                        help="Install this prebuilt Blender extension ZIP during the live check")
     args = parser.parse_args()
+    if args.addon is not None and (not args.live or not args.addon.is_file()):
+        parser.error("--addon requires --live and an existing extension archive")
     if not args.blender:
         parser.error("Blender executable not found")
     with TemporaryDirectory(prefix="stereograph-test-") as scratch:

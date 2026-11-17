@@ -4,7 +4,9 @@ Use Python 3.11 or later on the MCP side and Blender 5.3 or later. The qualifica
 
 ## Build and configure
 
-From the repository root:
+Download the Python wheel and Blender extension ZIP from the [release page](https://github.com/ion-cascade/stereograph/releases). Install the wheel in a virtual environment with `python -m pip install <wheel>` and use that environment's `stereograph` command in the MCP client.
+
+To build from source, run these commands from the repository root:
 
 ```sh
 uv sync --locked
@@ -54,4 +56,4 @@ uv run --locked python tests/check_blender.py
 uv run --locked python tests/check_blender.py --live
 ```
 
-The last command also starts a temporary Blender window under an isolated test profile, installs the extension, exercises the live bridge and closes that window. Both native commands create their own disposable scene and verify its file hash at completion. Use `--blender /absolute/path/to/blender` to select a specific installation.
+The last command also starts a temporary Blender window under an isolated test profile, installs the extension, exercises the live bridge and closes that window. Both native commands create their own disposable scene and verify its file hash at completion. Use `--blender /absolute/path/to/blender` to select a specific installation. To verify a release build, pass its installed MCP command with `--server` and its published ZIP with `--live --addon`.
