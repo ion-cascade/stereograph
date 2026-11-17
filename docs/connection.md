@@ -34,7 +34,7 @@ blender --background --factory-startup --disable-autoexec --command extension bu
 }
 ```
 
-The bridge listens on `127.0.0.1:9877`. If that port is occupied, set the same `STEREOGRAPH_PORT` in both processes. For background execution alone, use the server and a Blender executable. The connection token and extension are only needed for live calls. For live health alone, omit `STEREOGRAPH_ALLOW_PYTHON`.
+The bridge listens on `127.0.0.1:9877`. If that port is occupied, set the same `STEREOGRAPH_PORT` in both processes. For background workflows alone, use the server and a Blender executable. The connection token and extension are only needed for live calls. For live health alone, omit `STEREOGRAPH_ALLOW_PYTHON`.
 
 ## Tools
 
@@ -47,6 +47,14 @@ The bridge listens on `127.0.0.1:9877`. If that port is occupied, set the same `
 For an initial read, pass `result = bpy.context.scene.name`. Assign a finite JSON-compatible value to `result` and use standard output or error for short diagnostics. Both execution tools accept a timeout in seconds. A result with `error.execution` set to `unknown` or `may_have_changed` needs state inspection before retrying. The background deadline stops Blender. A live deadline can expire while already-running Python is still executing. Live requests are never replayed automatically.
 
 Python execution runs with Blender's full local permissions. Enable it for trusted clients and scripts only, and keep the port local. See the [security policy](../SECURITY.md).
+
+The 0.2 [compatibility matrix](parity.md) lists the additional tools and their supported modes. File summaries, navigation, capture and rendering don't require Python opt-in. The live tools use the already-connected session. For a background render, set `blend_file` on the render tool. Output paths can be absolute or relative to the loaded file using Blender's `//` prefix. Use an existing directory and the extension for the scene's configured still image format.
+
+## Install searchable documentation
+
+Run `stereograph install-docs` once with Git available to install the pinned Blender documentation snapshot. The tool verifies the source commit and stores only the Python API and manual data locally. Lookups run offline and report the snapshot label.
+
+For a different documentation version, configure `STEREOGRAPH_DOCS_ROOT` to a local directory containing `api/` and `manual/` trees of RST or HTML pages, and set `STEREOGRAPH_DOCS_VERSION` to the version of those files. The documentation version can differ from the connected Blender build. [Blender Python API](https://docs.blender.org/api/current/) · [Blender Manual](https://docs.blender.org/manual/en/latest/)
 
 ## Reproduce the checks
 
