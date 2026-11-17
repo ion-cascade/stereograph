@@ -21,7 +21,7 @@ Implement and qualify the [26-tool baseline](parity.md), including file summarie
 
 ### 0.3 · Comparative qualification
 
-Use equivalent Blender builds and fixture inputs. Compare correct results, failed-request recovery, median and tail response times and the time spent evaluating Blender versus moving data. Keep the raw results. Base each outperformance claim on a reproducible comparison.
+Use equivalent Blender builds and fixture inputs. Compare correct results, failed-request recovery, median and tail response times and the time spent evaluating Blender versus moving data. Keep the raw results. Base each outperformance claim on a reproducible comparison. See the [benchmark method](benchmarking.md).
 
 ### 0.4 · Spatial inspection
 

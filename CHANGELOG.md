@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 · 2026-11-17
+
+- Added a reproducible benchmark against Blender Lab MCP 1.0.3 with two disposable fixtures, paired timing runs, recovery scenarios and raw evidence.
+- Reduced headless response delay by waiting for Blender's exit notification while retaining on-disk diagnostics and process deadlines.
+
 ## 0.2.0 · 2026-11-17
 
 - Added native live and headless file summaries, plus collection and object inspection in the live session.

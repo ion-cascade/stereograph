@@ -13,7 +13,7 @@ Stereograph connects an MCP client to Blender for scene inspection, documentatio
 | 0.3 · Comparative qualification | Run both servers against the same fixtures and compare correctness, reliability, latency and recovery. |
 | 0.4 · Spatial inspection | Add read-only evaluated-geometry queries, contact and containment checks, frame sampling, and matched viewport evidence. |
 
-[GitHub milestones](https://github.com/ion-cascade/stereograph/milestones) · [Tool parity checklist](docs/parity.md) · [Architecture and acceptance gates](docs/roadmap.md)
+[GitHub milestones](https://github.com/ion-cascade/stereograph/milestones) · [Tool parity checklist](docs/parity.md) · [Architecture and acceptance gates](docs/roadmap.md) · [Benchmark method](docs/benchmarking.md)
 
 ## Development and releases
 
