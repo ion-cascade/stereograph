@@ -16,6 +16,7 @@ from stereograph_bridge import wire
 from .doc_install import default_directory, install
 from .documentation import register_documentation_tools
 from .inspection_tools import register_inspection_tools
+from .process import run_background
 from .viewport_tools import register_viewport_tools
 
 mcp = FastMCP("Stereograph")
@@ -106,13 +107,12 @@ def _background(blend_file, timeout, **request_data):
         environment = {k: v for k, v in os.environ.items() if k != "STEREOGRAPH_TOKEN"}
         try:
             with log.open("wb") as output:
-                completed = subprocess.run(args, stdout=output, stderr=subprocess.STDOUT,
-                                           stdin=subprocess.DEVNULL, timeout=timeout, env=environment)
-        except subprocess.TimeoutExpired:
+                returncode = run_background(args, output, environment, timeout)
+        except TimeoutError:
             return wire.failure("timeout", "Background Blender was stopped at the deadline.", "unknown")
         except OSError as exc:
             return wire.failure("blender_unavailable", str(exc))
-        if completed.returncode or not response.is_file():
+        if returncode or not response.is_file():
             with log.open("rb") as output:
                 output.seek(max(0, log.stat().st_size - 3000))
                 message = output.read().decode(errors="replace")

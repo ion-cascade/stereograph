@@ -7,11 +7,28 @@ import sys
 import bpy
 
 path = Path(sys.argv[-1])
+heavy = "--heavy" in sys.argv[sys.argv.index("--") + 1:]
 library_path = path.with_name("fixture library.blend")
 
 mesh = bpy.data.meshes.new("Library Mesh")
 linked = bpy.data.objects.new("Linked Marker", mesh)
 bpy.context.scene.collection.objects.link(linked)
+if heavy:
+    import bmesh
+
+    grid = bmesh.new()
+    try:
+        bmesh.ops.create_grid(grid, x_segments=192, y_segments=192, size=1)
+        grid.to_mesh(mesh)
+    finally:
+        grid.free()
+    linked.modifiers.new("Evaluated Thickness", "SOLIDIFY").thickness = .05
+    linked.hide_render = True
+    for index in range(1, 24):
+        instance = linked.copy()
+        instance.name = f"Linked Marker {index:02}"
+        instance.location = (5 + index % 6 * 3, index // 6 * 3, 0)
+        bpy.context.scene.collection.objects.link(instance)
 bpy.ops.wm.save_as_mainfile(filepath=str(library_path))
 
 bpy.ops.wm.read_factory_settings(use_empty=False)
@@ -41,9 +58,19 @@ hidden = bpy.data.objects.new("Hidden Marker", None)
 hidden.hide_viewport = True
 nested.objects.link(hidden)
 
-with bpy.data.libraries.load(str(library_path), link=True) as (_, target):
-    target.objects = ["Linked Marker"]
-nested.objects.link(target.objects[0])
+with bpy.data.libraries.load(str(library_path), link=True) as (source, target):
+    target.objects = sorted(name for name in source.objects if name.startswith("Linked Marker"))
+for obj in target.objects:
+    nested.objects.link(obj)
+
+if heavy:
+    for group in range(8):
+        collection = bpy.data.collections.new(f"Inspection Batch {group:02}")
+        nested.children.link(collection)
+        for index in range(64):
+            obj = bpy.data.objects.new(f"Marker {group:02}-{index:02}", None)
+            obj.location = (index % 8, index // 8, -3 - group)
+            collection.objects.link(obj)
 
 for name, filename in (("Missing Fixture Image", "missing-texture.png"), ("Existing Fixture Image", "real-texture.ppm")):
     image = bpy.data.images.new(name, 4, 4)

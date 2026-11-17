@@ -41,7 +41,6 @@ prefs = bpy.context.preferences.addons['bl_ext.user_default.mcp'].preferences
 prefs.host = "127.0.0.1"
 prefs.port = int(sys.argv[-1])
 prefs.use_autostart = True
-prefs.autostart_delay = 0.2
 bpy.ops.wm.save_userpref()
 """
 
@@ -132,8 +131,7 @@ def startup_environment(root):
     return env
 
 
-@contextmanager
-def window(blender, fixture, archive, env, store, reference_port=None):
+def install_extension(blender, archive, env, store, reference_port=None):
     script = store / "install.py"
     script.write_text(INSTALL if reference_port is None else REF_INSTALL, encoding="utf-8")
     install = [blender, "--background", "--factory-startup", "--disable-autoexec", "--offline-mode",
@@ -141,9 +139,12 @@ def window(blender, fixture, archive, env, store, reference_port=None):
     if reference_port is not None:
         install.append(str(reference_port))
     run_blender(install, env, store / "install.log")
-    log = store / "window.log"
+
+
+@contextmanager
+def launch_window(blender, fixture, env, log, reference=False):
     with log.open("wb") as output:
-        network_mode = "--offline-mode" if reference_port is None else "--online-mode"
+        network_mode = "--online-mode" if reference else "--offline-mode"
         process = subprocess.Popen([blender, network_mode, "--disable-autoexec", "--no-window-focus",
                                     str(fixture)], env=env, stdout=output, stderr=subprocess.STDOUT,
                                    stdin=subprocess.DEVNULL)
@@ -160,6 +161,13 @@ def window(blender, fixture, archive, env, store, reference_port=None):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
+
+
+@contextmanager
+def window(blender, fixture, archive, env, store, reference_port=None):
+    install_extension(blender, archive, env, store, reference_port=reference_port)
+    with launch_window(blender, fixture, env, store / "window.log", reference_port is not None) as process:
+        yield process
 
 
 async def wait_for_port(process, port):
