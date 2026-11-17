@@ -27,6 +27,10 @@ Use equivalent Blender builds and fixture inputs. Compare correct results, faile
 
 Expose one read-only inspection operation for evaluated surfaces, named pairs, contact and separation witnesses, containment, fractional-frame sampling and matched views. Calibrate on clear, touching, crossing, nested and subframe-only failures. Review a synthetic hand and handle first, then run a read-only check of the saved knight handoff. See the [spatial inspection guide](spatial-inspection.md).
 
-### Later · Pose validation and candidate solving
+### 0.5 · Rig-aware pose editing
 
-Add versioned rig profiles for joint axes, limits, semantic surfaces and authored grip references. Use bounded candidate solves on disposable fixtures. Require actual surface checks and visual review before a candidate becomes an edit to an authored scene.
+Qualify one planted-hand FK elbow edit from preview to native Undo. Version the rig profile and support world and moving prop anchors. Record wrist angle, hand drift, segment lengths and evaluated surface clearance at the target frame and four neighbours. Verify accepted and rejected candidates on repeatable fixtures and run the workflow on a disposable knight copy. See the [elbow editing guide](elbow-editing.md).
+
+### Later · Broader pose editing
+
+Extend the supported rig controls and edit types based on evidence from the elbow workflow and subsequent production poses.

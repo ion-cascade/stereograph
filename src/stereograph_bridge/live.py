@@ -5,6 +5,7 @@ import hmac
 import os
 from queue import Empty, Full, Queue
 import socket
+import sys
 from threading import Event, Thread
 from uuid import uuid4
 
@@ -133,4 +134,7 @@ def stop():
     bpy.app.handlers.load_post.remove(_file_loaded)
     if bpy.app.timers.is_registered(bridge.tick):
         bpy.app.timers.unregister(bridge.tick)
+    module = sys.modules.get(f"{__package__}.posing.dispatch")
+    if module is not None:
+        module.unregister()
     bridge.shutdown()

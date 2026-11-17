@@ -2,7 +2,7 @@
 
 An independently maintained MCP server and Blender add-on for scene inspection, editing, and spatial verification.
 
-Stereograph connects an MCP client to Blender for scene inspection, documentation lookup, workspace navigation, screenshots, rendering, and spatial inspection. It can open a specified file in background Blender for inspection, rendering, and trusted Python execution. Start with the [connection guide](docs/connection.md) and [Blender Lab compatibility matrix](docs/parity.md).
+Stereograph connects an MCP client to Blender for scene inspection, documentation lookup, workspace navigation, screenshots, rendering, spatial inspection, and bounded FK elbow edits. It can open a specified file in background Blender for inspection, rendering, and trusted Python execution. Start with the [connection guide](docs/connection.md) and [Blender Lab compatibility matrix](docs/parity.md).
 
 ## Roadmap
 
@@ -12,8 +12,9 @@ Stereograph connects an MCP client to Blender for scene inspection, documentatio
 | 0.2 · Blender Lab parity | Qualify the standard tool set against Blender Lab MCP 1.0.3. Record the live and headless support for each tool. |
 | 0.3 · Comparative qualification | Run both servers against the same fixtures and compare correctness, reliability, latency and recovery. |
 | 0.4 · Spatial inspection | Add read-only evaluated-geometry queries, contact and containment checks, frame sampling, and matched viewport evidence. |
+| 0.5 · Rig-aware pose editing | Preview, verify, and apply an FK elbow edit with a planted hand and native Blender Undo. |
 
-[GitHub milestones](https://github.com/ion-cascade/stereograph/milestones) · [Tool parity checklist](docs/parity.md) · [Architecture and acceptance gates](docs/roadmap.md) · [Benchmark method](docs/benchmarking.md) · [Spatial inspection guide](docs/spatial-inspection.md)
+[GitHub milestones](https://github.com/ion-cascade/stereograph/milestones) · [Tool parity checklist](docs/parity.md) · [Architecture and acceptance gates](docs/roadmap.md) · [Benchmark method](docs/benchmarking.md) · [Spatial inspection guide](docs/spatial-inspection.md) · [Elbow editing guide](docs/elbow-editing.md)
 
 ## Development and releases
 

@@ -36,12 +36,17 @@ def _text(x, y, text, size, color="#e1e7f1", bold=False):
     return f'<text x="{x}" y="{y}" fill="{color}" font-size="{size}" font-weight="{weight}">{escape(text)}</text>'
 
 
-def diagram(a, b, witness, sample, orientation, deadline):
+def witness_framing(a, b, witness):
+    center = (witness.point_a + witness.point_b) / 2
+    shortest_object = min(np.linalg.norm(a.root.high - a.root.low), np.linalg.norm(b.root.high - b.root.low))
+    radius = max(float(np.linalg.norm(witness.point_a - witness.point_b)) * .85, float(shortest_object) * .29, 1e-8)
+    return center, radius
+
+
+def diagram(a, b, witness, sample, orientation, deadline, framing=None, phase=None):
     right, up, depth = map(np.asarray, VIEWS[orientation])
     landmarks = np.stack((witness.point_a, witness.point_b))
-    center = landmarks.mean(axis=0)
-    shortest_object = min(np.linalg.norm(a.root.high - a.root.low), np.linalg.norm(b.root.high - b.root.low))
-    radius = max(float(np.linalg.norm(landmarks[0] - landmarks[1])) * .85, float(shortest_object) * .29, 1e-8)
+    center, radius = framing if framing is not None else witness_framing(a, b, witness)
     background = embedded_context(a, b, center, radius, (right, up, depth), deadline)
     outlines = [_outline(surface, index, center, radius, right, up, color)
                 for surface, index, color in zip((a, b), witness.indices, COLORS)]
@@ -55,7 +60,7 @@ def diagram(a, b, witness, sample, orientation, deadline):
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 {WIDTH} {HEIGHT}">',
         '<title>Evaluated surface witness</title><rect width="960" height="640" fill="#141a24"/>',
         '<g font-family="DejaVu Sans,sans-serif">',
-        _text(28, 34, "Evaluated surface witness", 22, bold=True),
+        _text(28, 34, f"{phase} · Evaluated surface witness" if phase else "Evaluated surface witness", 22, bold=True),
         _text(28, 60, f"Frame {sample['frame']:g} · {orientation} orthographic · {label}", 15),
         '<clipPath id="geometry"><rect x="18" y="80" width="924" height="472"/></clipPath>',
         '<rect x="18" y="80" width="924" height="472" fill="#1d2634" stroke="#354354"/>',
