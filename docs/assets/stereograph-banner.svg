@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title">
+  <title id="title">Ion Cascade Stereograph</title>
+  <defs>
+    <linearGradient id="background" x2="1" y2="1">
+      <stop stop-color="#111b2c"/>
+      <stop offset="1" stop-color="#143639"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#71959d" stroke-opacity=".24"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="360" rx="24" fill="url(#background)"/>
+  <path d="M680 28h576v304H680z" fill="url(#grid)"/>
+  <path d="M680 60v-32h32m512 0h32v32m0 240v32h-32m-512 0h-32v-32" fill="none" stroke="#66828b" stroke-width="2"/>
+  <path d="M743 180h450M968 47v266" fill="none" stroke="#869ea5" stroke-opacity=".55" stroke-dasharray="4 8"/>
+  <g transform="translate(846 57) scale(1.92)">
+    <rect width="128" height="128" rx="28" fill="#11222a"/>
+    <rect x="1" y="1" width="126" height="126" rx="27" fill="none" stroke="#39505b" stroke-width="2"/>
+    <path d="M21 28v-7h10m66 0h10v7m0 72v7H97m-66 0H21v-7" fill="none" stroke="#66828b" stroke-width="3" stroke-linecap="round"/>
+    <g fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m50 30 27 15v30L50 90 23 75V45Zm0 30 27-15M50 60 23 45m27 15v30" fill="#132c36" stroke="#94baff"/>
+      <path d="m79 45 27 15v30l-27 15-27-15V60Zm0 30 27-15M79 75 52 60m27 15v30" fill="#84f5d5" fill-opacity=".12" stroke="#84f5d5"/>
+    </g>
+    <path d="m50 60 29 15" fill="none" stroke="#f7cc83" stroke-width="3" stroke-linecap="round"/>
+    <g fill="#f7cc83">
+      <circle cx="50" cy="60" r="4.5"/>
+      <circle cx="79" cy="75" r="4.5"/>
+    </g>
+  </g>
+  <g font-family="Geist, Arial, sans-serif">
+    <text x="69" y="101" fill="#84f5d5" font-size="24" font-weight="700" letter-spacing="7">ION CASCADE</text>
+    <text x="62" y="209" fill="#f1f6fb" font-size="97" font-weight="700" letter-spacing="-4">Stereograph</text>
+    <text x="69" y="272" fill="#c2d7df" font-size="30">Spatial inspection and editing for Blender</text>
+  </g>
+</svg>

@@ -1,6 +1,21 @@
-# Ion Cascade Stereograph
+<p align="center">
+  <img src="docs/assets/stereograph-banner.svg" alt="Ion Cascade Stereograph. Spatial inspection and editing for Blender." width="1280" />
+</p>
 
-An independently maintained MCP server and Blender add-on for scene inspection, editing, and spatial verification.
+<p align="center">
+  <strong>An independent MCP server and Blender add-on.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ion-cascade/stereograph/releases/latest"><img src="https://img.shields.io/github/v/release/ion-cascade/stereograph?label=latest%20release&amp;color=116d72" alt="Latest Stereograph release" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ion-cascade/stereograph/releases/latest">Download latest release</a> ·
+  <a href="docs/connection.md">Set up</a> ·
+  <a href="docs/spatial-inspection.md">Spatial inspection</a> ·
+  <a href="docs/elbow-editing.md">Elbow editing</a>
+</p>
 
 Stereograph connects an MCP client to Blender for scene inspection, documentation lookup, workspace navigation, screenshots, rendering, spatial inspection, and bounded FK elbow edits. It can open a specified file in background Blender for inspection, rendering, and trusted Python execution. Start with the [connection guide](docs/connection.md) and [Blender Lab compatibility matrix](docs/parity.md).
 
