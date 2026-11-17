@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "garment": "Front skirt",
+  "mask": "Feathered knee patch",
+  "protected_groups": [
+    "Waist and sewn edges"
+  ],
+  "protected_objects": [
+    "Embroidered edge"
+  ],
+  "direction": [
+    0,
+    1,
+    0
+  ],
+  "distance": 0.016,
+  "frame": 10,
+  "span": 2,
+  "pairs": [
+    {
+      "obstacle": {
+        "object": "Knee plate"
+      },
+      "minimum_gap": 0.004
+    },
+    {
+      "obstacle": {
+        "object": "Clearance guard"
+      },
+      "minimum_gap": 0.006
+    }
+  ]
+}

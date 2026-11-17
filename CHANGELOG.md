@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 · 2026-11-17
+
+- Map layered clothing and armour, report modifier and attachment chains, and review authored weights, correctives and cloth cache state.
+- Measure seam drift, local edge deformation and evaluated surface contact with matched orthographic witnesses.
+- Preview an animated cloth correction with guarded clearance, protected trim and adjacent frames. Apply only a current live candidate, with native Blender Undo.
+
 ## 0.7.0 · 2026-11-17
 
 - Inspect semantic joint and control roles, rest axes, landmarks, constraints and authored skin influences.

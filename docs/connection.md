@@ -50,7 +50,7 @@ Python execution runs with Blender's full local permissions. Enable it for trust
 
 The 0.2 [compatibility matrix](parity.md) lists the additional tools and their supported modes. File summaries, navigation, capture and rendering don't require Python opt-in. The live tools use the already-connected session. For a background render, set `blend_file` on the render tool. Output paths can be absolute or relative to the loaded file using Blender's `//` prefix. Use an existing directory and the extension for the scene's configured still image format.
 
-For evaluated surface inspection and planted-hand FK elbow edits, see the [spatial inspection guide](spatial-inspection.md) and the [elbow editing guide](elbow-editing.md). Use the [motion review guide](motion-review.md) for phase-specific contact across an animation. See the [rig inspection guide](rig-inspection.md) for joint and weight diagnostics and undoable knee repair. These tools work without live Python opt-in.
+For evaluated surface inspection and planted-hand FK elbow edits, see the [spatial inspection guide](spatial-inspection.md) and the [elbow editing guide](elbow-editing.md). Use the [motion review guide](motion-review.md) for phase-specific contact across an animation. See the [rig inspection guide](rig-inspection.md) for joint and weight diagnostics and undoable knee repair. See the [clothing fit guide](clothing-fit.md) for layered garment review and localized cloth correctives. These tools work without live Python opt-in.
 
 ## Install searchable documentation
 
