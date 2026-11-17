@@ -4,6 +4,7 @@ import argparse
 import asyncio
 from copy import deepcopy
 import json
+from math import dist
 from pathlib import Path
 import secrets
 import shutil
@@ -134,6 +135,14 @@ async def verify(args, root):
                 assert jumped["ok"] and jumped["data"]["frame"] == bookmark["frame"]
                 readback = await state(session, session_id)
                 assert readback[:2] == [10, .25] and readback[2:] == start[2:], readback
+                layout = await call(session, "get_screenshot_of_window_as_json")
+                assert layout["ok"], layout
+                view = next(area["space"] for area in layout["data"]["areas"] if area["type"] == "VIEW_3D")
+                assert view["view_perspective"] == "ORTHO"
+                assert dist(view["view_location"], bookmark["center"]) < 1e-6
+                (directory / "jump-readback.json").write_text(json.dumps(
+                    dict(frame=jumped["data"]["frame"], view=view["view_perspective"],
+                         location=view["view_location"], selected_objects_unchanged=True), indent=2))
                 retain(live, directory, "live")
 
                 edited = await call(session, "execute_blender_code", expected_session=session_id, code=(
