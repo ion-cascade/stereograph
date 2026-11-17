@@ -25,6 +25,9 @@
     "gap": {
       "object": "Known gap"
     },
+    "hardware": {
+      "object": "Curved fitting"
+    },
     "absent": {
       "object": "Absent mesh"
     },
@@ -77,6 +80,15 @@
         11
       ],
       "gap": 0.01
+    },
+    {
+      "id": "hardware",
+      "pair": [
+        "hardware",
+        "anchor"
+      ],
+      "mode": "clear",
+      "gap": 0.1
     },
     {
       "id": "unresolved",

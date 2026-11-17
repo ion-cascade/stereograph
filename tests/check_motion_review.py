@@ -28,6 +28,7 @@ PROFILE = {
         "moving": {"object": "Subframe motion"},
         "pad": {"object": "Exactly touching", "material": "Contact leather", "vertex_group": "Contact pad"},
         "gap": {"object": "Known gap"},
+        "hardware": {"object": "Curved fitting"},
         "absent": {"object": "Absent mesh"},
         "open": {"object": "Open shell"},
         "nested": {"object": "Nested"},
@@ -37,6 +38,7 @@ PROFILE = {
         {"id": "permitted", "pair": ["pad", "anchor"], "mode": "allowed"},
         {"id": "seated", "pair": ["pad", "anchor"], "mode": "required", "frames": [11, 11], "gap": .01},
         {"id": "missed", "pair": ["gap", "anchor"], "mode": "required", "frames": [11, 11], "gap": .01},
+        {"id": "hardware", "pair": ["hardware", "anchor"], "mode": "clear", "gap": .1},
         {"id": "unresolved", "pair": ["absent", "anchor"], "mode": "clear"},
         {"id": "open volume", "pair": ["nested", "open"], "mode": "clear", "check_containment": True},
     ],
@@ -54,6 +56,8 @@ def check(report):
     assert index["seated", 11]["status"] == "pass"
     assert index["missed", 11]["code"] == "required_contact_missing"
     assert index["unresolved", 11]["status"] == "unresolved"
+    assert index["hardware", 11]["status"] == "pass"
+    assert index["hardware", 11]["triangle_counts"][0] > 0
     assert index["open volume", 10]["status"] == "inconclusive"
     rules = {rule["rule"]: rule for rule in report["rules"]}
     assert rules["missed"]["missed_all_required_samples"]
@@ -97,6 +101,15 @@ async def verify(args, root):
         "obj = bpy.data.objects['Exactly touching']\n"
         "obj.data.materials.append(bpy.data.materials.new('Contact leather'))\n"
         "obj.vertex_groups.new(name='Contact pad').add(list(range(8)), 1, 'REPLACE')\n"
+        "curve = bpy.data.curves.new('Curved fitting', 'CURVE')\n"
+        "curve.dimensions = '3D'\n"
+        "curve.bevel_depth = .15\n"
+        "spline = curve.splines.new('POLY')\n"
+        "spline.points.add(1)\n"
+        "spline.points[0].co = (2, 0, -.5, 1)\n"
+        "spline.points[1].co = (2, 0, .5, 1)\n"
+        "fitting = bpy.data.objects.new('Curved fitting', curve)\n"
+        "bpy.context.scene.collection.objects.link(fitting)\n"
         "bpy.ops.wm.save_as_mainfile(filepath=sys.argv[-1])\n"
     )
     run_blender([args.blender, "--background", "--factory-startup", "--disable-autoexec",

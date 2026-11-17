@@ -51,7 +51,7 @@ class Region:
         if "minimum_weight" in data and group is None:
             raise ValueError("minimum_weight requires a vertex_group.")
         return cls(
-            name(data.get("object"), "mesh object name"), group,
+            name(data.get("object"), "surface object name"), group,
             number(data.get("minimum_weight", .5), "minimum_weight", .001, 1),
             name(data["material"], "material name") if "material" in data else None,
         )
@@ -76,7 +76,7 @@ class Rule:
         ) or pair[0] == pair[1]):
             raise ValueError(f"{key!r} needs two different named surfaces.")
         if surfaces[pair[0]].object == surfaces[pair[1]].object:
-            raise ValueError(f"{key!r} needs surfaces on different mesh objects.")
+            raise ValueError(f"{key!r} needs surfaces on different objects.")
         frames = interval(data.get("frames", list(span)), "Rule frames")
         if frames[0] < span[0] or frames[1] > span[1]:
             raise ValueError(f"{key!r} extends outside the review range.")

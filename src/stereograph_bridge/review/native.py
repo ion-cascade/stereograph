@@ -59,8 +59,10 @@ class Review:
         region = self.profile.surfaces[key]
         if region not in self.cache:
             obj = self.bpy.context.view_layer.objects.get(region.object)
-            if obj is None or obj.type != "MESH":
-                self.errors[key] = _unresolved("mesh_unresolved", f"{region.object!r} is not an available mesh.")
+            if obj is None or obj.type not in {"MESH", "CURVE"}:
+                self.errors[key] = _unresolved(
+                    "surface_unresolved", f"{region.object!r} is not an available mesh or bevelled curve."
+                )
                 return None
             try:
                 self.cache[region] = _evaluated_surface(obj, self.graph, region)
