@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "rig": "FK arm",
+  "controls": {
+    "upper": "Upper",
+    "forearm": "Forearm",
+    "hand": "Palm"
+  },
+  "palm_axis": [
+    0,
+    1,
+    0
+  ],
+  "anchor_object": "Moving prop",
+  "hand_witness_object": "Hand witness",
+  "clearance": [
+    {
+      "pair": [
+        "Leather glove",
+        "Forearm guard"
+      ],
+      "minimum_gap": 0.04
+    }
+  ],
+  "limits": {
+    "max_swivel": 25,
+    "min_improvement": 3,
+    "elbow_bend": [
+      20,
+      100
+    ],
+    "wrist_bend": 70,
+    "position_tolerance": 1e-05,
+    "rotation_tolerance": 0.01,
+    "neighbour_position": 0.003,
+    "neighbour_rotation": 0.5,
+    "neighbour_step": 40
+  }
+}

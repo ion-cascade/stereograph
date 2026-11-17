@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 · 2026-11-17
+
+- Preview an FK elbow swivel with a planted hand in world space or relative to an animated prop.
+- Validate rig profiles, arm lengths, wrist alignment, evaluated surface clearance and neighbouring poses. Return matched front and side evidence and conflicts with witnesses.
+- Apply a live candidate as an undoable Action variant or cancel it. Recheck the active pose and clearance before changing the Action.
+
 ## 0.4.0 · 2026-11-17
 
 - Added live and background spatial inspection of evaluated meshes at frames and subframes, with distances, contact states, directional containment and world-space witnesses.

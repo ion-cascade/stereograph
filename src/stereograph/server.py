@@ -16,6 +16,7 @@ from stereograph_bridge import wire
 from .doc_install import default_directory, install
 from .documentation import register_documentation_tools
 from .inspection_tools import register_inspection_tools
+from .pose_tools import register_pose_tools
 from .process import run_background
 from .spatial_tools import register_spatial_tools
 from .viewport_tools import register_viewport_tools
@@ -132,6 +133,7 @@ register_inspection_tools(mcp, _live, _background)
 register_documentation_tools(mcp)
 register_viewport_tools(mcp, _live, _background)
 register_spatial_tools(mcp, _live, _background)
+register_pose_tools(mcp, _live, _background)
 
 
 def main():

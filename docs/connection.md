@@ -50,6 +50,8 @@ Python execution runs with Blender's full local permissions. Enable it for trust
 
 The 0.2 [compatibility matrix](parity.md) lists the additional tools and their supported modes. File summaries, navigation, capture and rendering don't require Python opt-in. The live tools use the already-connected session. For a background render, set `blend_file` on the render tool. Output paths can be absolute or relative to the loaded file using Blender's `//` prefix. Use an existing directory and the extension for the scene's configured still image format.
 
+For evaluated surface inspection and planted-hand FK elbow edits, see the [spatial inspection guide](spatial-inspection.md) and the [elbow editing guide](elbow-editing.md). These tools work without live Python opt-in.
+
 ## Install searchable documentation
 
 Run `stereograph install-docs` once with Git available to install the pinned Blender documentation snapshot. The tool verifies the source commit and stores only the Python API and manual data locally. Lookups run offline and report the snapshot label.

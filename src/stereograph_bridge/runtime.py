@@ -66,6 +66,9 @@ def bounded_result(outcome):
     return outcome
 
 
+POSE_OPERATIONS = {"pose_preview", "pose_apply", "pose_cancel"}
+
+
 def dispatch(bpy, request, session_id, allow_python):
     version = request.get("version")
     if type(version) is not int or version != VERSION:
@@ -73,6 +76,8 @@ def dispatch(bpy, request, session_id, allow_python):
     operation = request.get("operation")
     if operation == "health":
         return success({**scene_state(bpy, session_id), "python_enabled": allow_python})
+    if operation in POSE_OPERATIONS:
+        return bounded_result(run_pose(request, session_id))
     if operation in {"inspect", "viewport", "spatial"}:
         return bounded_result(run_native(bpy, request))
     if operation != "execute":
@@ -82,6 +87,15 @@ def dispatch(bpy, request, session_id, allow_python):
     if not session_id or request.get("expected_session") != session_id:
         return failure("stale_session", "Read health again and confirm the intended Blender file.")
     return run_python(bpy, request.get("code"))
+
+
+def run_pose(request, session_id=None):
+    parameters = request.get("parameters")
+    if not isinstance(parameters, dict) or not valid_timeout(parameters.get("seconds")):
+        return failure("bad_pose_request", "Invalid pose parameters or timeout.")
+    from .posing.dispatch import dispatch as pose_dispatch
+
+    return pose_dispatch(request["operation"], parameters, session_id, parameters["seconds"])
 
 
 def run_native(bpy, request):
@@ -105,6 +119,11 @@ def headless_request(bpy, request):
     target = request.get("file")
     if not isinstance(target, str) or not bpy.data.filepath or Path(bpy.data.filepath).resolve() != Path(target):
         return failure("wrong_file", "Background Blender did not open the requested file.")
-    outcome = (run_native(bpy, request) if request.get("operation") in {"inspect", "viewport", "spatial"}
-               else run_python(bpy, request.get("code")))
+    operation = request.get("operation")
+    if operation in POSE_OPERATIONS:
+        outcome = run_pose(request)
+    elif operation in {"inspect", "viewport", "spatial"}:
+        outcome = run_native(bpy, request)
+    else:
+        outcome = run_python(bpy, request.get("code"))
     return bounded_result({"state": scene_state(bpy), **outcome})
