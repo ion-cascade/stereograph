@@ -41,4 +41,4 @@ Map people and other articulated rigs through explicit roles. Inspect rest fit, 
 
 ### 0.8 · Clothing and armour fit
 
-Use verified pose and contact evidence to diagnose clothing and armour fit in motion.
+Map clothing and armour layers, inspect evaluated stack dependencies and cloth cache status, and measure seam drift, contact and local deformation. Qualify a feathered pose-dependent corrective with protected trim, adjacent frame checks, explicit live apply and native Undo. See the [clothing fit guide](clothing-fit.md).

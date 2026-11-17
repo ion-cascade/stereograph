@@ -134,7 +134,7 @@ def stop():
     bpy.app.handlers.load_post.remove(_file_loaded)
     if bpy.app.timers.is_registered(bridge.tick):
         bpy.app.timers.unregister(bridge.tick)
-    for namespace in ("posing", "rigging"):
+    for namespace in ("posing", "rigging", "fitting"):
         module = sys.modules.get(f"{__package__}.{namespace}.dispatch")
         if module is not None:
             module.unregister()

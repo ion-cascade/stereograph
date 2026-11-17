@@ -15,6 +15,7 @@ from stereograph_bridge import wire
 
 from .doc_install import default_directory, install
 from .documentation import register_documentation_tools
+from .fit_tools import register_fit_tools
 from .inspection_tools import register_inspection_tools
 from .pose_tools import register_pose_tools
 from .review_tools import register_review_tools
@@ -139,6 +140,7 @@ register_spatial_tools(mcp, _live, _background)
 register_pose_tools(mcp, _live, _background)
 register_review_tools(mcp, _live, _background)
 register_rig_tools(mcp, _live, _background)
+register_fit_tools(mcp, _live, _background)
 
 
 def main():

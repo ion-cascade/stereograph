@@ -234,7 +234,9 @@ async def trial(args, server, fixture, fixture_name, records, round_number, rng)
         expected = TOOL_NAMES if server.reference else TOOL_NAMES | {"blender_health", "inspect_spatial_pairs", "preview_elbow_edit",
                                                "apply_elbow_edit", "cancel_elbow_edit", "review_motion_contacts",
                                                "compare_motion_reviews", "jump_to_motion_witness", "inspect_rig",
-                                               "preview_knee_repair", "apply_knee_repair", "cancel_knee_repair"}
+                                               "preview_knee_repair", "apply_knee_repair", "cancel_knee_repair",
+                                               "inspect_clothing_fit", "preview_cloth_corrective", "apply_cloth_corrective",
+                                               "cancel_cloth_corrective"}
         assert {tool.name for tool in (await session.list_tools()).tools} == expected
         if round_number is not None:
             records.record(**fields, kind="cold", case="mcp-initialize", elapsed_ns=initialized_ns, ok=True)
