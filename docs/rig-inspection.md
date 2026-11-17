@@ -32,7 +32,7 @@ Use the [knee profile example](knee-repair-profile.json) with a full-influence t
 2. Read the before and candidate tracking angles, foot and anchor drift, segment lengths, clearance witnesses and exact planned keys. The target and four adjacent whole/half-frame samples are tested. A straight leg with an undefined bend plane, an unreachable target, or a solve that fails the configured invariants blocks apply.
 3. Apply the issued candidate ID with `apply_knee_repair`, or discard it with `cancel_knee_repair`. Apply rechecks the active pose, Action and clearance, then writes three pole location channels at the edit frame in an Action variant. The original Action is retained. Blender Global Undo and an open 3D viewport are required. Use normal Blender Undo to restore the original Action.
 
-Use `blend_file` for background inspection or non-applicable previews. Scenes whose drivers need trust can be tested through a trusted live session. Bake history-dependent simulations or use a controlled disposable reproduction before interpreting their contacts. The repair targets native rigs with live pole controls. Baked object and mesh playback carries no editable knee pole.
+Knee preview and apply accept an explicit timeout of up to 600 seconds. Match the client deadline for densely layered scenes. Live evaluation occupies Blender during the check. Use `blend_file` for background inspection or non-applicable previews. Scenes whose drivers need trust can be tested through a trusted live session. Bake history-dependent simulations or use a controlled disposable reproduction before interpreting their contacts. The repair targets native rigs with live pole controls. Baked object and mesh playback carries no editable knee pole.
 
 ## Reproduce
 

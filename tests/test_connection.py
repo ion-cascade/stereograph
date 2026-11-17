@@ -28,6 +28,13 @@ class WireTests(unittest.TestCase):
             with self.assertRaises(EOFError):
                 wire.receive(receiver)
 
+    def test_knee_deadline_applies_only_to_verification_and_apply(self):
+        self.assertTrue(wire.valid_timeout(300, "knee_preview"))
+        self.assertTrue(wire.valid_timeout(600, "knee_apply"))
+        self.assertFalse(wire.valid_timeout(601, "knee_apply"))
+        self.assertFalse(wire.valid_timeout(300, "rig_inspect"))
+        self.assertFalse(wire.valid_timeout(300, "knee_cancel"))
+
     def test_timeout_range(self):
         for value in (True, None, "1", 0, float("inf"), float("nan"), 121):
             with self.subTest(value=value):

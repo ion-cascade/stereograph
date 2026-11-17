@@ -41,6 +41,7 @@ def register_rig_tools(mcp, live, background):
 
         The default target tracks the profile's forward direction. Alternatively supply a signed
         angle or world knee target. Live preview is bound to the current session and frame.
+        Use a longer deadline up to 600 seconds for expensive scene evaluation.
         """
         arguments = dict(profile=profile, expected_session=expected_session, frame=frame,
                          tracking_degrees=tracking_degrees, knee_target=list(knee_target) if knee_target else None,
