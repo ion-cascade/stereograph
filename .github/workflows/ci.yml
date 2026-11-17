@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Check local documentation links
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          errors = []
+          files = sorted([*Path('.').glob('*.md'), *Path('docs').rglob('*.md')])
+          for file in files:
+              for link in re.findall(r'\]\(([^\s)]+)\)', file.read_text(encoding='utf-8')):
+                  address = urlsplit(link)
+                  if address.scheme or address.netloc or not address.path:
+                      continue
+                  if not (file.parent / unquote(address.path)).is_file():
+                      errors.append(f'{file}: missing {link}')
+
+          if errors:
+              raise SystemExit('\n'.join(errors))
+          print(f'Checked links in {len(files)} Markdown files')
+          PY
