@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0 · 2026-11-17
+
+- Review phase-specific clearance and contact rules over animated mesh regions.
+- Sample near misses and contact changes at subframes. Report measured failures, unresolved or inconclusive checks, and matched surface witnesses.
+- Replay frame samples and framing across revisions, compare findings, and jump to a live witness without changing selection.
+
 ## 0.5.0 · 2026-11-17
 
 - Preview an FK elbow swivel with a planted hand in world space or relative to an animated prop.

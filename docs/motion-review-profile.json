@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "name": "Calibrated handoff",
+  "frames": [
+    10,
+    11
+  ],
+  "sampling": {
+    "step": 1,
+    "refine_step": 0.25,
+    "near_gap": 0.55
+  },
+  "surfaces": {
+    "anchor": {
+      "object": "Anchor"
+    },
+    "moving": {
+      "object": "Subframe motion"
+    },
+    "pad": {
+      "object": "Exactly touching",
+      "material": "Contact leather",
+      "vertex_group": "Contact pad"
+    },
+    "gap": {
+      "object": "Known gap"
+    },
+    "hardware": {
+      "object": "Curved fitting"
+    },
+    "absent": {
+      "object": "Absent mesh"
+    },
+    "open": {
+      "object": "Open shell"
+    },
+    "nested": {
+      "object": "Nested"
+    }
+  },
+  "rules": [
+    {
+      "id": "sweep",
+      "pair": [
+        "moving",
+        "anchor"
+      ],
+      "mode": "clear"
+    },
+    {
+      "id": "permitted",
+      "pair": [
+        "pad",
+        "anchor"
+      ],
+      "mode": "allowed"
+    },
+    {
+      "id": "seated",
+      "pair": [
+        "pad",
+        "anchor"
+      ],
+      "mode": "required",
+      "frames": [
+        11,
+        11
+      ],
+      "gap": 0.01
+    },
+    {
+      "id": "missed",
+      "pair": [
+        "gap",
+        "anchor"
+      ],
+      "mode": "required",
+      "frames": [
+        11,
+        11
+      ],
+      "gap": 0.01
+    },
+    {
+      "id": "hardware",
+      "pair": [
+        "hardware",
+        "anchor"
+      ],
+      "mode": "clear",
+      "gap": 0.1
+    },
+    {
+      "id": "unresolved",
+      "pair": [
+        "absent",
+        "anchor"
+      ],
+      "mode": "clear"
+    },
+    {
+      "id": "open volume",
+      "pair": [
+        "nested",
+        "open"
+      ],
+      "mode": "clear",
+      "check_containment": true
+    }
+  ]
+}

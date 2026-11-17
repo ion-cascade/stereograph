@@ -59,11 +59,14 @@ def _pairs(parameters):
     return list(dict.fromkeys(map(tuple, pairs)))
 
 
-def _evaluated_surface(obj, graph):
+def _evaluated_surface(obj, graph, region=None):
     evaluated = obj.evaluated_get(graph)
     if not evaluated.is_evaluated:
         raise InvalidScene("object_not_evaluated", f"{obj.name!r} has no evaluated object in this view layer.")
-    mesh = evaluated.to_mesh()
+    group = obj.vertex_groups.get(region.group) if region is not None and region.group else None
+    if region is not None and region.group and group is None:
+        raise InvalidScene("vertex_group_unresolved", f"{obj.name!r} has no vertex group {region.group!r}.")
+    mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=graph) if group else evaluated.to_mesh()
     try:
         if mesh is None:
             raise InvalidScene("no_surface", f"{obj.name!r} has no evaluated mesh.")
@@ -78,7 +81,13 @@ def _evaluated_surface(obj, graph):
         world = vertices.reshape(-1, 3) @ matrix[:3, :3].T + matrix[:3, 3]
         if not np.all(np.isfinite(world)):
             raise InvalidScene("invalid_surface", f"{obj.name!r} has nonfinite evaluated coordinates.")
-        surface = Surface(world, indices.reshape(-1, 3))
+        triangles = indices.reshape(-1, 3)
+        if group is None and (region is None or region.material is None):
+            surface = Surface(world, triangles)
+        else:
+            selected = _region_triangles(obj, evaluated, mesh, triangles, region, group)
+            surface = Surface(world, triangles[selected])
+            surface.source_indices = selected[surface.source_indices]
         if not len(surface.triangles):
             raise InvalidScene("no_surface", f"{obj.name!r} has only degenerate triangles.")
         return surface
@@ -86,7 +95,25 @@ def _evaluated_surface(obj, graph):
         evaluated.to_mesh_clear()
 
 
-def _measure(a, b, pair, frame, evaluated_frame, tolerance, deadline):
+def _region_triangles(obj, evaluated, mesh, triangles, region, group):
+    selected = np.arange(len(triangles))
+    if region.material:
+        slots = [i for i, slot in enumerate(evaluated.material_slots)
+                 if slot.material and slot.material.name == region.material]
+        if not slots:
+            raise InvalidScene("material_unresolved", f"{obj.name!r} has no evaluated material {region.material!r}.")
+        materials = np.empty(len(triangles), dtype=np.int32)
+        mesh.loop_triangles.foreach_get("material_index", materials)
+        selected = selected[np.isin(materials, slots)]
+    if group is not None:
+        members = np.fromiter((any(weight.group == group.index and weight.weight >= region.weight
+                                   for weight in vertex.groups) for vertex in mesh.vertices),
+                              dtype=bool, count=len(mesh.vertices))
+        selected = selected[members[triangles[selected]].all(axis=1)]
+    return selected
+
+
+def _measure(a, b, pair, frame, evaluated_frame, tolerance, deadline, *, check_containment=True):
     extent = max(abs(a.root.low).max(), abs(a.root.high).max(),
                  abs(b.root.low).max(), abs(b.root.high).max(), 1.)
     epsilon = max(1e-10, float(np.spacing(extent)) * 64)
@@ -107,7 +134,7 @@ def _measure(a, b, pair, frame, evaluated_frame, tolerance, deadline):
         numerical_epsilon=epsilon, surfaces_intersect=boundary,
         transverse_crossing=witness.crossing,
         containment={"a_in_b": relation(a, b, boundary, epsilon, deadline),
-                     "b_in_a": relation(b, a, boundary, epsilon, deadline)},
+                     "b_in_a": relation(b, a, boundary, epsilon, deadline)} if check_containment else None,
         witness={"a": witness.point_a.tolist(), "b": witness.point_b.tolist(),
                  "a_triangle": int(a.source_indices[witness.indices[0]]),
                  "b_triangle": int(b.source_indices[witness.indices[1]])},

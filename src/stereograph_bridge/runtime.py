@@ -67,6 +67,7 @@ def bounded_result(outcome):
 
 
 POSE_OPERATIONS = {"pose_preview", "pose_apply", "pose_cancel"}
+REVIEW_OPERATIONS = {"motion_review", "motion_jump"}
 
 
 def dispatch(bpy, request, session_id, allow_python):
@@ -78,6 +79,8 @@ def dispatch(bpy, request, session_id, allow_python):
         return success({**scene_state(bpy, session_id), "python_enabled": allow_python})
     if operation in POSE_OPERATIONS:
         return bounded_result(run_pose(request, session_id))
+    if operation in REVIEW_OPERATIONS:
+        return bounded_result(run_review(bpy, request, session_id))
     if operation in {"inspect", "viewport", "spatial"}:
         return bounded_result(run_native(bpy, request))
     if operation != "execute":
@@ -96,6 +99,17 @@ def run_pose(request, session_id=None):
     from .posing.dispatch import dispatch as pose_dispatch
 
     return pose_dispatch(request["operation"], parameters, session_id, parameters["seconds"])
+
+
+def run_review(bpy, request, session_id=None):
+    parameters = request.get("parameters")
+    if not isinstance(parameters, dict) or not valid_timeout(parameters.get("seconds")):
+        return failure("bad_motion_profile", "Invalid motion review parameters or timeout.")
+    from .review.native import inspect_motion, jump
+
+    if request["operation"] == "motion_jump":
+        return jump(bpy, parameters, session_id)
+    return inspect_motion(bpy, parameters, parameters["seconds"], session_id)
 
 
 def run_native(bpy, request):
@@ -122,6 +136,8 @@ def headless_request(bpy, request):
     operation = request.get("operation")
     if operation in POSE_OPERATIONS:
         outcome = run_pose(request)
+    elif operation in REVIEW_OPERATIONS:
+        outcome = run_review(bpy, request)
     elif operation in {"inspect", "viewport", "spatial"}:
         outcome = run_native(bpy, request)
     else:
