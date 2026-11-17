@@ -8,7 +8,7 @@ import traceback
 
 from .inspection import inspect
 from .viewport import dispatch as window_operation
-from .wire import MAX_CODE, MAX_MESSAGE, VERSION, InvalidMessage, encode, failure, success
+from .wire import MAX_CODE, MAX_MESSAGE, VERSION, InvalidMessage, encode, failure, success, valid_timeout
 
 OUTPUT_LIMIT = 8192
 
@@ -73,7 +73,7 @@ def dispatch(bpy, request, session_id, allow_python):
     operation = request.get("operation")
     if operation == "health":
         return success({**scene_state(bpy, session_id), "python_enabled": allow_python})
-    if operation in {"inspect", "viewport"}:
+    if operation in {"inspect", "viewport", "spatial"}:
         return bounded_result(run_native(bpy, request))
     if operation != "execute":
         return failure("unknown_operation", "Unknown Blender operation.")
@@ -85,7 +85,15 @@ def dispatch(bpy, request, session_id, allow_python):
 
 
 def run_native(bpy, request):
-    query, parameters = request.get("query"), request.get("parameters", {})
+    operation = request.get("operation")
+    parameters = request.get("parameters", {})
+    if operation == "spatial":
+        if not isinstance(parameters, dict) or not valid_timeout(parameters.get("seconds")):
+            return failure("bad_spatial_request", "Invalid spatial parameters or timeout.")
+        from .spatial.query import inspect as spatial_inspect
+
+        return spatial_inspect(bpy, parameters, parameters["seconds"])
+    query = request.get("query")
     if not isinstance(query, str) or not isinstance(parameters, dict):
         return failure("bad_request", "Invalid native request.")
     if request["operation"] == "viewport":
@@ -97,6 +105,6 @@ def headless_request(bpy, request):
     target = request.get("file")
     if not isinstance(target, str) or not bpy.data.filepath or Path(bpy.data.filepath).resolve() != Path(target):
         return failure("wrong_file", "Background Blender did not open the requested file.")
-    outcome = (run_native(bpy, request) if request.get("operation") in {"inspect", "viewport"}
+    outcome = (run_native(bpy, request) if request.get("operation") in {"inspect", "viewport", "spatial"}
                else run_python(bpy, request.get("code")))
     return bounded_result({"state": scene_state(bpy), **outcome})

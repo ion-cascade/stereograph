@@ -25,7 +25,7 @@ Use equivalent Blender builds and fixture inputs. Compare correct results, faile
 
 ### 0.4 · Spatial inspection
 
-Expose one read-only inspection operation for evaluated surfaces, named pairs, contact and separation witnesses, containment, fractional-frame sampling and matched views. Calibrate on clear, touching, crossing, nested and subframe-only failures. Review a synthetic hand and handle first, then run a read-only check of the saved knight handoff.
+Expose one read-only inspection operation for evaluated surfaces, named pairs, contact and separation witnesses, containment, fractional-frame sampling and matched views. Calibrate on clear, touching, crossing, nested and subframe-only failures. Review a synthetic hand and handle first, then run a read-only check of the saved knight handoff. See the [spatial inspection guide](spatial-inspection.md).
 
 ### Later · Pose validation and candidate solving
 
