@@ -46,16 +46,18 @@ def fingerprint(bpy, context, frame):
     return hashlib.sha256(json.dumps(state, sort_keys=True).encode()).hexdigest()
 
 
-def accept_target_curves(context):
+def accept_target_curves(context, targets=None):
+    if targets is None:
+        targets = [(bone, "rotation_quaternion", range(4)) for bone in (context.bones[0], context.bones[2])]
     bag = action_get_channelbag_for_slot(context.action, context.animation.action_slot)
     if bag is None:
         raise PoseProblem("action_slot_required", "The assigned Action has no editable keyframe channel bag.")
-    for bone in (context.bones[0], context.bones[2]):
-        path = bone.path_from_id("rotation_quaternion")
-        for index in range(4):
+    for bone, property_name, indices in targets:
+        path = bone.path_from_id(property_name)
+        for index in indices:
             curve = bag.fcurves.find(path, index=index)
             if curve is not None and (curve.mute or curve.lock or len(curve.modifiers) or len(curve.sampled_points)):
-                raise PoseProblem("locked_action_channel", "Editable quaternion channels must be unmuted, unlocked and unmodified.")
+                raise PoseProblem("locked_action_channel", "Editable channels must be unmuted, unlocked and unmodified.")
 
 
 def _assign(context, action):
@@ -67,11 +69,11 @@ def _assign(context, action):
     return slot
 
 
-def _write_keys(bag, context, frame, values):
+def _write_keys(bag, frame, edits):
     changed = []
-    for bone, rotation in zip((context.bones[0], context.bones[2]), values):
-        path = bone.path_from_id("rotation_quaternion")
-        for index, value in enumerate(rotation):
+    for bone, property_name, values in edits:
+        path = bone.path_from_id(property_name)
+        for index, value in enumerate(values):
             curve = bag.fcurves.find(path, index=index)
             if curve is None:
                 curve = bag.fcurves.new(path, index=index, group_name=bone.name)
@@ -94,14 +96,22 @@ def _write_keys(bag, context, frame, values):
 
 @contextmanager
 def variant(bpy, context, frame, values):
+    edits = [(bone, "rotation_quaternion", rotation)
+             for bone, rotation in zip((context.bones[0], context.bones[2]), values)]
+    with staged_action(bpy, context, frame, edits, "Elbow") as action:
+        yield action
+
+
+@contextmanager
+def staged_action(bpy, context, frame, edits, label):
     original = context.action
     staged = original.copy()
-    staged.name = f"{original.name} · Elbow {frame:g}"
+    staged.name = f"{original.name} · {label} {frame:g}"
     action = {"keep": False, "action": staged, "keyed": []}
     try:
         slot = _assign(context, staged)
         bag = action_get_channelbag_for_slot(staged, slot)
-        action["keyed"] = _write_keys(bag, context, frame, values)
+        action["keyed"] = _write_keys(bag, frame, edits)
         yield action
     finally:
         if not action["keep"]:

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 · 2026-11-17
+
+- Inspect semantic joint and control roles, rest axes, landmarks, constraints and authored skin influences.
+- Review arm reach, wrist bend, thumb opposition, finger curl, knee tracking and planted-foot drift. Link sampled contact reports from the same scene.
+- Preview and apply a bounded native IK pole edit as an undoable Action variant, with foot, segment, adjacent frame and clearance checks.
+
 ## 0.6.0 · 2026-11-17
 
 - Review phase-specific clearance and contact rules over animated mesh regions.

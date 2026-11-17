@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "name": "Rig diagnostics calibration",
+  "roles": {
+    "bad axis": {
+      "object": "Test rig",
+      "bone": "Bad axis",
+      "expected_axis": [
+        0,
+        1,
+        0
+      ],
+      "landmark": [
+        0,
+        0,
+        2.1
+      ]
+    },
+    "missing": {
+      "object": "Test rig",
+      "bone": "Missing"
+    },
+    "hip": {
+      "object": "Test rig",
+      "bone": "Upper"
+    },
+    "knee": {
+      "object": "Test rig",
+      "bone": "Lower",
+      "control": "Knee pole"
+    },
+    "foot": {
+      "object": "Test rig",
+      "bone": "Foot",
+      "control": "Foot target"
+    },
+    "Shoulder": {
+      "object": "Test rig",
+      "bone": "Shoulder"
+    },
+    "Elbow": {
+      "object": "Test rig",
+      "bone": "Elbow"
+    },
+    "Palm": {
+      "object": "Test rig",
+      "bone": "Palm"
+    },
+    "Thumb base": {
+      "object": "Test rig",
+      "bone": "Thumb base"
+    },
+    "Thumb middle": {
+      "object": "Test rig",
+      "bone": "Thumb middle"
+    },
+    "Thumb tip": {
+      "object": "Test rig",
+      "bone": "Thumb tip"
+    },
+    "Finger base": {
+      "object": "Test rig",
+      "bone": "Finger base"
+    },
+    "Finger middle": {
+      "object": "Test rig",
+      "bone": "Finger middle"
+    },
+    "Finger tip": {
+      "object": "Test rig",
+      "bone": "Finger tip"
+    }
+  },
+  "switches": {
+    "leg": {
+      "object": "Test rig",
+      "bone": "Upper",
+      "property": "IK_FK",
+      "ik_controls": [
+        "Foot target",
+        "Knee pole"
+      ]
+    }
+  },
+  "bindings": {
+    "knee weights": {
+      "mesh": "Calibrated skin",
+      "rig": "Test rig",
+      "region": "Knee patch",
+      "expected_bones": [
+        "Lower"
+      ]
+    }
+  },
+  "checks": {
+    "leg": {
+      "kind": "leg",
+      "roles": {
+        "hip": "hip",
+        "knee": "knee",
+        "foot": "foot"
+      },
+      "limits": {
+        "tracking": [
+          -3,
+          3
+        ]
+      },
+      "contact_rule": "knee clearance"
+    },
+    "plant": {
+      "kind": "plant",
+      "roles": {
+        "foot": "foot"
+      },
+      "limits": {
+        "position_drift": [
+          0,
+          0.0001
+        ],
+        "rotation_drift": [
+          0,
+          0.1
+        ]
+      }
+    },
+    "reach": {
+      "kind": "arm",
+      "roles": {
+        "shoulder": "Shoulder",
+        "elbow": "Elbow",
+        "wrist": "Palm"
+      }
+    },
+    "thumb": {
+      "kind": "thumb",
+      "roles": {
+        "palm": "Palm",
+        "cmc": "Thumb base",
+        "mcp": "Thumb middle",
+        "ip": "Thumb tip"
+      }
+    },
+    "finger": {
+      "kind": "finger",
+      "roles": {
+        "base": "Finger base",
+        "middle": "Finger middle",
+        "tip": "Finger tip"
+      }
+    }
+  }
+}

@@ -24,7 +24,7 @@ def _error(exc):
     return failure(exc.code, str(exc))
 
 
-def _apply_native(candidate, deadline):
+def _apply_native(candidate, deadline, commit=apply):
     context = bpy.context
     window = context.window
     if window is None or not context.preferences.edit.use_global_undo:
@@ -41,7 +41,7 @@ def _apply_native(candidate, deadline):
     with context.temp_override(window=window, area=area, region=region):
         if not bpy.ops.ed.undo_push.poll():
             return failure("native_undo_required", "Blender undo is unavailable in the current mode.")
-        return success(apply(bpy, candidate, deadline, checkpoint))
+        return success(commit(bpy, candidate, deadline, checkpoint))
 
 
 def dispatch(operation, parameters, session_id, timeout):

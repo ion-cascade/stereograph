@@ -35,6 +35,10 @@ Qualify one planted-hand FK elbow edit from preview to native Undo. Version the 
 
 Review named surfaces through a frame range with phase-specific clearance and contact rules. Measure fractional frames, retain matched witnesses and compare revisions using the same sampling and framing. Qualify a subframe-only crossing on a synthetic fixture and the left-hand transfer on a disposable production copy. See the [motion review guide](motion-review.md).
 
-### Later · Broader pose editing
+### 0.7 · Rig inspection and repair
 
-Extend the supported rig controls and edit types based on evidence from the elbow workflow and subsequent production poses.
+Map people and other articulated rigs through explicit roles. Inspect rest fit, posed controls, skin influences and regional motion, and link sampled contact evidence. Qualify one planted-foot knee tracking edit on a native two-bone IK pole, with an undoable Action variant. See the [rig inspection guide](rig-inspection.md).
+
+### 0.8 · Clothing and armour fit
+
+Use verified pose and contact evidence to diagnose clothing and armour fit in motion.
