@@ -2,10 +2,12 @@
 
 from dataclasses import asdict, dataclass
 import hashlib
+from time import monotonic
 
 import numpy as np
 
 from ..review.native import set_frame
+from ..spatial.distance import InspectionLimit
 from ..spatial.evidence import VIEWS, diagram, witness_framing
 from ..spatial.query import InvalidScene, _evaluated_surface, _measure
 from .corrective_profile import Corrective
@@ -190,6 +192,8 @@ def _assess(bpy, plan, deadline, views=(), *, accepted=None, checkpoint=None):
             conflicts.append(dict(frame=plan.frame, code="baseline_already_clear"))
         if checkpoint:
             scene.frame_set(start[0], subframe=start[1])
+            if monotonic() >= deadline:
+                raise InspectionLimit("Clothing evaluation reached its deadline before native apply.")
             checkpoint("Before Stereograph cloth corrective")
         with staged(bpy, obj, plan) as transaction:
             for time in plan.times:
@@ -214,6 +218,8 @@ def _assess(bpy, plan, deadline, views=(), *, accepted=None, checkpoint=None):
                     raise InvalidScene("corrective_recheck_failed", "The staged correction no longer meets the clearance and deformation limits.")
                 result.update(applied=True, undoable=True, modifier=transaction["modifier"].name, node_group=transaction["group"].name)
                 scene.frame_set(start[0], subframe=start[1])
+                if monotonic() >= deadline:
+                    raise InspectionLimit("Clothing evaluation reached its deadline before native apply.")
                 checkpoint("Stereograph cloth corrective")
                 transaction["keep"] = True
             return result, Candidate(plan, key, signature) if not conflicts else None
