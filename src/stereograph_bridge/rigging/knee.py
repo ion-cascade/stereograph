@@ -251,7 +251,11 @@ def apply(bpy, candidate, deadline, checkpoint):
             if conflicts:
                 return dict(applied=False, frame=frame, conflicts=conflicts)
         set_frame(scene, frame)
+        if monotonic() >= deadline:
+            raise InspectionLimit("Knee verification completed after the deadline. The Action was preserved.")
         checkpoint("Before Stereograph knee repair")
+        if monotonic() >= deadline:
+            raise InspectionLimit("Blender recorded the baseline after the deadline. The Action was preserved.")
         keep = context.action.use_fake_user
         with staged_action(bpy, context, frame, edits, LABEL) as action:
             try:

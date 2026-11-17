@@ -10,6 +10,7 @@ DEFAULT_PORT = 9877
 MAX_MESSAGE = 1_048_576
 MAX_CODE = 65_536
 MAX_TIMEOUT = 120.0
+KNEE_TIMEOUT = 600.0
 HEADER = struct.Struct("!I")
 
 
@@ -68,8 +69,12 @@ def port_number(value):
     return port
 
 
-def valid_timeout(value):
-    return (type(value) in (float, int) and 0.05 <= value <= MAX_TIMEOUT
+def timeout_limit(operation=None):
+    return KNEE_TIMEOUT if operation in ("knee_preview", "knee_apply") else MAX_TIMEOUT
+
+
+def valid_timeout(value, operation=None):
+    return (type(value) in (float, int) and 0.05 <= value <= timeout_limit(operation)
             and math.isfinite(value))
 
 

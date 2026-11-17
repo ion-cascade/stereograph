@@ -106,7 +106,7 @@ def run_pose(request, session_id=None):
 
 def run_rig(bpy, request, session_id=None):
     arguments = request.get("parameters")
-    if not isinstance(arguments, dict) or not valid_timeout(arguments.get("seconds")):
+    if not isinstance(arguments, dict) or not valid_timeout(arguments.get("seconds"), request.get("operation")):
         return failure("bad_rig_request", "Invalid rig parameters or timeout.")
     from .rigging.dispatch import dispatch as rig_dispatch
 

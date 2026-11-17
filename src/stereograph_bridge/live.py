@@ -62,7 +62,7 @@ class Bridge:
         if not isinstance(supplied, str) or not hmac.compare_digest(supplied.encode(errors="surrogatepass"), self.token):
             return wire.failure("unauthorized", "The client token could not be verified.")
         timeout = request.get("timeout")
-        if not wire.valid_timeout(timeout):
+        if not wire.valid_timeout(timeout, request.get("operation")):
             return wire.failure("bad_request", "Invalid request timeout.")
         future = Future()
         if self.stopping.is_set():

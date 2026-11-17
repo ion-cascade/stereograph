@@ -27,8 +27,8 @@ mcp = FastMCP("Stereograph")
 
 
 def _live(operation, timeout, **parameters):
-    if not wire.valid_timeout(timeout):
-        return wire.failure("bad_request", "Timeout must be between 0.05 and 120 seconds.")
+    if not wire.valid_timeout(timeout, operation):
+        return wire.failure("bad_request", f"Timeout must be between 0.05 and {wire.timeout_limit(operation):g} seconds.")
     token = os.environ.get("STEREOGRAPH_TOKEN", "")
     if len(token) < 32:
         return wire.failure("unconfigured", "Set the same STEREOGRAPH_TOKEN for Blender and Stereograph.")
@@ -89,8 +89,9 @@ def execute_blender_code_for_cli(blend_file: str, code: str, timeout: float = 30
 
 
 def _background(blend_file, timeout, **request_data):
-    if not wire.valid_timeout(timeout):
-        return wire.failure("bad_request", "Timeout must be between 0.05 and 120 seconds.")
+    operation = request_data.get("operation")
+    if not wire.valid_timeout(timeout, operation):
+        return wire.failure("bad_request", f"Timeout must be between 0.05 and {wire.timeout_limit(operation):g} seconds.")
     try:
         filename = Path(blend_file).expanduser().resolve(strict=True)
     except (OSError, ValueError, RuntimeError):
