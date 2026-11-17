@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 · 2026-11-17
+
+- Added live and background spatial inspection of evaluated meshes at frames and subframes, with distances, contact states, directional containment and world-space witnesses.
+- Added matching annotated orthographic evidence in both modes, and disposable regression fixtures for geometry, deformation and animation.
+
 ## 0.3.0 · 2026-11-17
 
 - Added a reproducible benchmark against Blender Lab MCP 1.0.3 with two disposable fixtures, paired timing runs, recovery scenarios and raw evidence.

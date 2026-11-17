@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "stereograph_bridge"
-version = "0.3.0"
+version = "0.4.0"
 name = "Ion Cascade Stereograph"
 tagline = "Connect a local MCP client to Blender"
 maintainer = "Ion Cascade"
